@@ -1,5 +1,5 @@
 # ChatColors
-[English Version](./README_en.md)
+[English Version](./README.md)
 
 ChatColors 是一个轻量级的 Minecraft 插件，允许玩家在聊天中使用颜色代码（如 `&a`, `&b` 等），并可设置默认聊天颜色。支持开关、重载命令和多语言。
 
