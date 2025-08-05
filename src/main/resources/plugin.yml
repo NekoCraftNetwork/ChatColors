@@ -1,0 +1,18 @@
+name: ChatColors
+main: com.zFlqw.chatcolors.ChatColors
+version: 1.0
+api-version: 1.21
+author: zFlqw
+description: >
+  A lightweight Minecraft plugin that allows players to use color codes (&) in chat messages.
+  Supports configurable colors and multi-language messages.
+commands:
+  chatcolor:
+    description: Manage ChatColor plugin commands
+    usage: /chatcolor <reload|set> [color]
+    permission: chatcolor.use
+    permission-message: You do not have permission to use this command.
+permissions:
+  chatcolor.use:
+    description: Allows use of chatcolor commands
+    default: true
