@@ -17,8 +17,8 @@ ChatColors is a lightweight Minecraft plugin that allows players to use color co
 
 ## 🛠 Supported Versions
 
-- Minecraft versions: 1.19 ~ 1.21+  
-- Spigot API versions: 1.19 ~ 1.21+  
+- Minecraft versions: 1.18 ~ 1.21+  
+- Spigot API versions: 1.18 ~ 1.21+  
 - Java versions: Java 17 or higher
 
 ---
@@ -51,7 +51,7 @@ resources/
 
 | Command                   | Description                    | Permission       |
 |---------------------------|--------------------------------|------------------|
-| `/chatcolor reload`       | Reload config and lang files   | `chatcolor.use`  |
+| `/chatcolor reload`       | Reload config and lang files   | `chatcolor.admin`  |
 | `/chatcolor set <color>`  | Set default chat color         | `chatcolor.use`  |
 
 ---
@@ -62,28 +62,39 @@ resources/
 chatcolor.use:
   description: Allows use of chatcolor commands
   default: true
+chatcolor.admin:
+  description: Allows admin to use the reload command to reload configuration.
+  default: false
 ```
 
 ---
 
 ## 📁 Project Structure
+<details>
+<summary><code>Project Structure (click to expand)</code></summary>
 
 ```
 ChatColor/
+├── LICENSE
 ├── README.md
+├── README_zh.md
 ├── pom.xml
-└── src
-    ├── main
-    │   ├── java/
-    │   │   └── com/zFlqw/
-    │   │       ├── ChatColor.java
-    │   │       └── Messages.java
-    │   └── resources/
-    │       ├── config.yml
-    │       ├── messages_en.yml
-    │       ├── messages_zh.yml
-    │       └── plugin.yml
+└── src/
+    └── main/
+        ├── java/
+        │   └── com/
+        │       └── zFlqw/
+        │           └── chatcolors/
+        │               ├── ChatColors.java
+        │               └── Messages.java
+        └── resources/
+            ├── plugin.yml
+            ├── config.yml
+            ├── messages_en.yml
+            └── messages_zh.yml
 ```
+
+</details>
 
 ---
 

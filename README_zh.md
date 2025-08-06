@@ -17,8 +17,8 @@ ChatColors 是一个轻量级的 Minecraft 插件，允许玩家在聊天中使�
 
 ## 🛠 支持版本
 
-- Minecraft 版本：1.19 ~ 1.21+ 
-- Spigot API 版本：1.19 ~ 1.21+  
+- Minecraft 版本：1.18 ~ 1.21+ 
+- Spigot API 版本：1.18 ~ 1.21+  
 - Java 版本：Java 17 及以上  
 
 ---
@@ -51,8 +51,8 @@ resources/
 
 | 命令                 | 描述              | 权限            |
 |----------------------|-------------------|-----------------|
-| `/chatcolor reload`  | 重载配置文件      | `chatcolor.use` |
-| `/chatcolor set <色>`| 设置默认聊天颜色  | `chatcolor.use` |
+| `/chatcolor reload`  | 重载配置文件      | `chatcolor.admin` |
+| `/chatcolor set 颜色代码`| 设置默认聊天颜色  | `chatcolor.use` |
 
 ---
 
@@ -62,28 +62,40 @@ resources/
 chatcolor.use:
   description: 允许使用 chatcolor 命令
   default: true
+chatcolor.admin:
+  description: 允许管理员重新加载配置文件
+  default: false
 ```
 
 ---
 
 ## 📁 插件目录结构
 
+<details>
+<summary><code>目录结构 (点击展开)</code></summary>
+
 ```
 ChatColor/
+├── LICENSE
 ├── README.md
+├── README_zh.md
 ├── pom.xml
-└── src
-    ├── main
-    │   ├── java/
-    │   │   └── com/zFlqw/
-    │   │       ├── ChatColor.java
-    │   │       └── Messages.java
-    │   └── resources/
-    │       ├── config.yml
-    │       ├── messages_en.yml
-    │       ├── messages_zh.yml
-    │       └── plugin.yml
+└── src/
+    └── main/
+        ├── java/
+        │   └── com/
+        │       └── zFlqw/
+        │           └── chatcolors/
+        │               ├── ChatColors.java
+        │               └── Messages.java
+        └── resources/
+            ├── plugin.yml
+            ├── config.yml
+            ├── messages_en.yml
+            └── messages_zh.yml
 ```
+
+</details>
 
 ---
 

@@ -112,6 +112,6 @@ public class ChatColors extends JavaPlugin implements Listener {
         if (code.length() != 2) return false;
         if (code.charAt(0) != '&') return false;
         char c = Character.toLowerCase(code.charAt(1));
-        return "0123456789abcdef".indexOf(c) >= 0;
+        return "0123456789abcdefklmnor".indexOf(c) >= 0;
     }
 }
