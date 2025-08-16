@@ -29,6 +29,7 @@ public class ChatColors extends JavaPlugin implements Listener {
     private Messages messages;
 
     private final Map<UUID, String> playerColors = new ConcurrentHashMap<>();
+    private volatile boolean playerDataDirty = false;
 
     private File playerDataFile;
     private FileConfiguration playerDataConfig;
@@ -40,6 +41,10 @@ public class ChatColors extends JavaPlugin implements Listener {
     private static final String VALID_CODES = "0123456789abcdefklmnor";
 
     private static final String COMMAND_NAME = "chatcolor";
+    
+    // Auto-save configuration constants
+    private static final long SAVE_INTERVAL_TICKS = 20L * 60; // 1 minute in ticks
+    private static final long SAVE_INITIAL_DELAY_TICKS = 20L * 60; // 1 minute initial delay
 
     private static final List<String> COLOR_CODES = Collections.unmodifiableList(Arrays.asList(
             "&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9",
@@ -57,9 +62,12 @@ public class ChatColors extends JavaPlugin implements Listener {
         playerDataFile = new File(getDataFolder(), "playerdata.yml");
         if (!playerDataFile.exists()) {
             try {
+                if (!playerDataFile.getParentFile().exists()) {
+                    playerDataFile.getParentFile().mkdirs();
+                }
                 playerDataFile.createNewFile();
             } catch (IOException e) {
-                getLogger().severe("Could not create playerdata.yml file!");
+                getLogger().severe("Could not create playerdata.yml file: " + e.getMessage());
             }
         }
         playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
@@ -109,9 +117,13 @@ public class ChatColors extends JavaPlugin implements Listener {
                 }
             }
         }
+        playerDataDirty = false; // Mark as clean after loading
     }
 
     private synchronized void savePlayerColors() {
+        if (!playerDataDirty) {
+            return; // No changes to save
+        }
 
         playerDataConfig.set("colors", null);
 
@@ -120,15 +132,15 @@ public class ChatColors extends JavaPlugin implements Listener {
         }
         try {
             playerDataConfig.save(playerDataFile);
+            playerDataDirty = false; // Mark as clean after successful save
         } catch (IOException e) {
-            getLogger().severe("Could not save playerdata.yml file!");
+            getLogger().severe("Could not save playerdata.yml file: " + e.getMessage());
         }
     }
 
     private void startAutoSaveTask() {
-
         saveTask = getServer().getScheduler().runTaskTimerAsynchronously(this,
-                this::savePlayerColors, 20L * 60, 20L * 60);
+                this::savePlayerColors, SAVE_INITIAL_DELAY_TICKS, SAVE_INTERVAL_TICKS);
     }
 
     @EventHandler
@@ -151,7 +163,8 @@ public class ChatColors extends JavaPlugin implements Listener {
         if (VALID_HEX_PATTERN.matcher(code).matches()) {
             try {
                 return ChatColor.of(code);
-            } catch (Exception ignored) {
+            } catch (IllegalArgumentException ignored) {
+                // Invalid hex color format
             }
         }
         if (code.startsWith("&") && code.length() == 2) {
@@ -165,12 +178,12 @@ public class ChatColors extends JavaPlugin implements Listener {
         if (input == null)
             return "";
         Matcher matcher = HEX_PATTERN.matcher(input);
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         while (matcher.find()) {
             try {
                 matcher.appendReplacement(buffer, ChatColor.of("#" + matcher.group(1)).toString());
-            } catch (Exception e) {
-
+            } catch (IllegalArgumentException e) {
+                // Invalid hex color, keep original text
                 matcher.appendReplacement(buffer, matcher.group(0));
             }
         }
@@ -228,8 +241,9 @@ public class ChatColors extends JavaPlugin implements Listener {
                 }
                 Player player = (Player) sender;
                 playerColors.put(player.getUniqueId(), colorCode);
+                playerDataDirty = true; // Mark data as dirty
 
-                String coloredSample = colorize(colorCode) + ChatColor.stripColor(colorCode);
+                String coloredSample = generateColorSample(colorCode);
                 sender.sendMessage(
                         ChatColor.GREEN + messages.getMessage("set-color-success").replace("%color%", coloredSample));
                 return true;
@@ -271,8 +285,16 @@ public class ChatColors extends JavaPlugin implements Listener {
         if (VALID_HEX_PATTERN.matcher(code).matches())
             return true;
         if (code.length() == 2 && code.charAt(0) == '&') {
-            return VALID_CODES.indexOf(Character.toLowerCase(code.charAt(1))) >= 0;
+            char colorChar = Character.toLowerCase(code.charAt(1));
+            return VALID_CODES.indexOf(colorChar) >= 0;
         }
         return false;
+    }
+
+    /**
+     * Generates a colored sample text for display purposes
+     */
+    private String generateColorSample(String colorCode) {
+        return colorize(colorCode) + ChatColor.stripColor(colorCode);
     }
 }

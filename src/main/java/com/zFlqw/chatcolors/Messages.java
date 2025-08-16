@@ -40,7 +40,9 @@ public class Messages {
         if (msg == null) return key;
 
         String prefix = messagesConfig.getString("prefix", "");
-        msg = msg.replace("%prefix%", prefix);
+        if (!prefix.isEmpty()) {
+            msg = msg.replace("%prefix%", prefix);
+        }
 
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
@@ -48,11 +50,13 @@ public class Messages {
     public List<String> getMessageList(String key) {
         if (messagesConfig.contains(key)) {
             List<String> list = messagesConfig.getStringList(key);
-            if (list != null) {
+            if (list != null && !list.isEmpty()) {
                 String prefix = messagesConfig.getString("prefix", "");
-                List<String> coloredList = new ArrayList<>();
+                List<String> coloredList = new ArrayList<>(list.size());
                 for (String line : list) {
-                    line = line.replace("%prefix%", prefix);
+                    if (!prefix.isEmpty()) {
+                        line = line.replace("%prefix%", prefix);
+                    }
                     coloredList.add(ChatColor.translateAlternateColorCodes('&', line));
                 }
                 return coloredList;
